@@ -40,3 +40,11 @@ export const ChangePassword = z.object({
   currentPassword: z.string(),
   newPassword: password,
 })
+
+export const ChangeProfile = z.object({
+  firstName: z.string(),
+  lastName: z.string(),
+  dateOfBirth: z.date().optional(),
+  phone: z.string().optional(),
+  email,
+})

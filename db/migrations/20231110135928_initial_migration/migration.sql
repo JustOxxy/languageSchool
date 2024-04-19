@@ -4,7 +4,10 @@ CREATE TABLE "User" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
     "name" TEXT,
+    "lastName" TEXT,
+    "dateOfBirth" TEXT,
     "email" TEXT NOT NULL,
+    "phone" TEXT,
     "hashedPassword" TEXT,
     "role" TEXT NOT NULL DEFAULT 'USER'
 );

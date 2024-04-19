@@ -1,5 +1,5 @@
 import Head from "next/head"
-import React, { FC } from "react"
+import React from "react"
 import { BlitzLayout } from "@blitzjs/next"
 
 const Layout: BlitzLayout<{ title?: string; children?: React.ReactNode }> = ({
@@ -9,8 +9,8 @@ const Layout: BlitzLayout<{ title?: string; children?: React.ReactNode }> = ({
   return (
     <>
       <Head>
-        <title>{title || "languageSchool"}</title>
-        <link rel="icon" href="/favicon.ico" />
+        <title>{title || "LS"}</title>
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
       </Head>
 
       {children}

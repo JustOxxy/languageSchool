@@ -171,3 +171,17 @@ The Blitz community is warm, safe, diverse, inclusive, and fun! Feel free to rea
 - [Forum discussions](https://github.com/blitz-js/blitz/discussions)
 - [How to Contribute](https://blitzjs.com/docs/contributing)
 - [Sponsor or donate](https://github.com/blitz-js/blitz#sponsors-and-donations)
+
+Значится что
+Если хочу добавить поле в уже существующую базу, то мне нужно изменить призму.схему
+Потому запушить в базу
+Сгенерировать заново
+И рестартнуть тс
+
+То есть при добавлении фичи твой флоу выглядит как то так:
+Изменяешь prisma.schema
+Пушишь эти изменения в базу (потому что надо синхронизировать реальные таблицы в БД с этой схемой)
+Добавляешь mutations/query, типы для которых описываешь с помощью zod схем
+
+blitz prisma db push
+blitz prisma generate
