@@ -21,7 +21,9 @@ export const ChatRoom = () => {
   const myVideo = useRef<HTMLVideoElement | null>(null)
   const userVideo = useRef<HTMLVideoElement | null>(null)
   const connectionRef = useRef<Peer.Instance>()
-
+  console.log(me)
+  console.log(caller)
+  console.log(idToCall)
   useEffect(() => {
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
