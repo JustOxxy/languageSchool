@@ -9,16 +9,16 @@ import {
   AccordionItem,
   DateInput,
   DatePicker,
-} from "@nextui-org/react"
-import { useCurrentUser } from "src/users/hooks/useCurrentUser"
-import { useState } from "react"
-import * as Yup from "yup"
-import { Controller, useForm } from "react-hook-form"
-import { MainInformationFormInputProps } from "./types"
-import { yupResolver } from "@hookform/resolvers/yup"
-import { useMutation } from "@blitzjs/rpc"
-import updateProfile from "./mutations/updateProfile"
-import { MainInformationFormButtons } from "./MainInformationFormButtons"
+} from "@nextui-org/react";
+import { useCurrentUser } from "src/users/hooks/useCurrentUser";
+import { useState } from "react";
+import * as Yup from "yup";
+import { Controller, useForm } from "react-hook-form";
+import { MainInformationFormInputProps } from "./types";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useMutation } from "@blitzjs/rpc";
+import updateProfile from "./mutations/updateProfile";
+import { MainInformationFormButtons } from "./MainInformationFormButtons";
 import {
   CalendarDate,
   getLocalTimeZone,
@@ -26,13 +26,13 @@ import {
   parseDate,
   parseDateTime,
   today,
-} from "@internationalized/date"
-import { format } from "date-fns"
+} from "@internationalized/date";
+import { format } from "date-fns";
 
 export const MainInformation = () => {
-  const currentUser = useCurrentUser()
-  const [isEditing, setIsEditing] = useState(false)
-  const [updateProfileMutation, { isSuccess }] = useMutation(updateProfile)
+  const currentUser = useCurrentUser();
+  const [isEditing, setIsEditing] = useState(false);
+  const [updateProfileMutation, { isSuccess }] = useMutation(updateProfile);
 
   const signupSchema = Yup.object()
     .shape({
@@ -40,7 +40,7 @@ export const MainInformation = () => {
       lastName: Yup.string().min(2, "Too Short").max(50, "Too Long").required("Required"),
       email: Yup.string().email("Invalid email").required("Required"),
     })
-    .required()
+    .required();
 
   const {
     control,
@@ -60,9 +60,9 @@ export const MainInformation = () => {
         : null,
     },
     resolver: yupResolver(signupSchema),
-  })
+  });
 
-  const { firstName, lastName, email, phone, dateOfBirth } = watch()
+  const { firstName, lastName, email, phone, dateOfBirth } = watch();
 
   const onSubmit = async () => {
     const success = await updateProfileMutation({
@@ -71,12 +71,12 @@ export const MainInformation = () => {
       email,
       phone,
       dateOfBirth: dateOfBirth?.toDate(getLocalTimeZone()),
-    })
+    });
 
     if (success) {
-      setIsEditing(false)
+      setIsEditing(false);
     }
-  }
+  };
 
   return (
     <div className="my-3">
@@ -207,5 +207,5 @@ export const MainInformation = () => {
         </Card>
       </form>
     </div>
-  )
-}
+  );
+};

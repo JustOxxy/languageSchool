@@ -1,4 +1,4 @@
-import { ErrorFallbackProps, ErrorComponent, ErrorBoundary, AppProps } from "@blitzjs/next"
+import { ErrorFallbackProps, ErrorComponent, ErrorBoundary, AppProps } from "@blitzjs/next";
 import {
   Link,
   Navbar,
@@ -6,36 +6,36 @@ import {
   NavbarContent,
   NavbarItem,
   NextUIProvider,
-} from "@nextui-org/react"
-import { AuthenticationError, AuthorizationError } from "blitz"
-import React, { Suspense } from "react"
-import { withBlitz } from "src/blitz-client"
-import { NavbarUser } from "src/components/navbar/NavbarUser"
+} from "@nextui-org/react";
+import { AuthenticationError, AuthorizationError } from "blitz";
+import React, { Suspense } from "react";
+import { withBlitz } from "src/blitz-client";
+import { NavbarUser } from "src/components/navbar/NavbarUser";
 
-import "src/styles/globals.css"
+import "src/styles/globals.css";
 
 function RootErrorFallback({ error }: ErrorFallbackProps) {
   if (error instanceof AuthenticationError) {
-    return <div>Error: You are not authenticated</div>
+    return <div>Error: You are not authenticated</div>;
   } else if (error instanceof AuthorizationError) {
     return (
       <ErrorComponent
         statusCode={error.statusCode}
         title="Sorry, you are not authorized to access this"
       />
-    )
+    );
   } else {
     return (
       <ErrorComponent
         statusCode={(error as any)?.statusCode || 400}
         title={error.message || error.name}
       />
-    )
+    );
   }
 }
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const getLayout = Component.getLayout || ((page) => page)
+  const getLayout = Component.getLayout || ((page) => page);
 
   return (
     <Suspense fallback={"Loading..."}>
@@ -77,7 +77,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         </ErrorBoundary>
       </NextUIProvider>
     </Suspense>
-  )
+  );
 }
 
-export default withBlitz(MyApp)
+export default withBlitz(MyApp);

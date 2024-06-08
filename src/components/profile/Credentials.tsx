@@ -1,24 +1,24 @@
-import { Card, CardHeader, Divider, CardBody, Button, Input } from "@nextui-org/react"
-import { useCurrentUser } from "src/users/hooks/useCurrentUser"
-import { Pencil, Check, X } from "lucide-react"
-import { useState } from "react"
-import * as Yup from "yup"
-import { Controller, useForm } from "react-hook-form"
-import { CredentialsFormInputProps, MainInformationFormInputProps } from "./types"
-import { yupResolver } from "@hookform/resolvers/yup"
-import { useMutation } from "@blitzjs/rpc"
-import updateProfile from "./mutations/updateProfile"
+import { Card, CardHeader, Divider, CardBody, Button, Input } from "@nextui-org/react";
+import { useCurrentUser } from "src/users/hooks/useCurrentUser";
+import { Pencil, Check, X } from "lucide-react";
+import { useState } from "react";
+import * as Yup from "yup";
+import { Controller, useForm } from "react-hook-form";
+import { CredentialsFormInputProps, MainInformationFormInputProps } from "./types";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useMutation } from "@blitzjs/rpc";
+import updateProfile from "./mutations/updateProfile";
 
 export const Credentials = () => {
-  const currentUser = useCurrentUser()
-  const [isEditing, setIsEditing] = useState(false)
-  const [updateProfileMutation, { isSuccess }] = useMutation(updateProfile)
+  const currentUser = useCurrentUser();
+  const [isEditing, setIsEditing] = useState(false);
+  const [updateProfileMutation, { isSuccess }] = useMutation(updateProfile);
 
   const signupSchema = Yup.object()
     .shape({
       email: Yup.string().email("Invalid email").required("Required"),
     })
-    .required()
+    .required();
 
   const {
     control,
@@ -34,9 +34,9 @@ export const Credentials = () => {
       email: currentUser?.email ?? "",
     },
     resolver: yupResolver(signupSchema),
-  })
+  });
 
-  const { firstName, lastName, email, phone, dateOfBirth } = watch()
+  const { firstName, lastName, email, phone, dateOfBirth } = watch();
 
   const onSubmit = async () => {
     await updateProfileMutation({
@@ -45,12 +45,12 @@ export const Credentials = () => {
       email,
       phone,
       dateOfBirth,
-    })
+    });
 
     if (isSuccess) {
-      setIsEditing(false)
+      setIsEditing(false);
     }
-  }
+  };
 
   return (
     <div className="my-3">
@@ -218,5 +218,5 @@ export const Credentials = () => {
         </Card>
       </form>
     </div>
-  )
-}
+  );
+};

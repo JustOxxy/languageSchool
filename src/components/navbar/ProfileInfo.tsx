@@ -1,18 +1,18 @@
-import { Routes } from "@blitzjs/next"
-import { useMutation } from "@blitzjs/rpc"
-import { Dropdown, DropdownTrigger, User, DropdownMenu, DropdownItem } from "@nextui-org/react"
-import { useRouter } from "next/router"
-import logout from "src/auth/mutations/logout"
-import { useCurrentUser } from "src/users/hooks/useCurrentUser"
+import { Routes } from "@blitzjs/next";
+import { useMutation } from "@blitzjs/rpc";
+import { Dropdown, DropdownTrigger, User, DropdownMenu, DropdownItem } from "@nextui-org/react";
+import { useRouter } from "next/router";
+import logout from "src/auth/mutations/logout";
+import { useCurrentUser } from "src/users/hooks/useCurrentUser";
 
 export const ProfileInfo = () => {
-  const router = useRouter()
-  const currentUser = useCurrentUser()
-  const [logoutMutation] = useMutation(logout)
+  const router = useRouter();
+  const currentUser = useCurrentUser();
+  const [logoutMutation] = useMutation(logout);
 
   const handleLogOut = () => {
-    router.push(Routes.Home()).finally(() => logoutMutation())
-  }
+    router.push(Routes.Home()).finally(() => logoutMutation());
+  };
 
   return (
     <Dropdown placement="bottom-start">
@@ -38,5 +38,5 @@ export const ProfileInfo = () => {
         </DropdownItem>
       </DropdownMenu>
     </Dropdown>
-  )
-}
+  );
+};

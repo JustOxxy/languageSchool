@@ -1,23 +1,23 @@
-import { AuthenticationError, PromiseReturnType } from "blitz"
+import { AuthenticationError, PromiseReturnType } from "blitz";
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { FORM_ERROR } from "src/core/components/Form"
-import login from "src/auth/mutations/login"
-import { Login } from "../schemas"
-import { useMutation } from "@blitzjs/rpc"
-import { Routes } from "@blitzjs/next"
-import { Card, Checkbox, Button, CardHeader, CardBody, Input, Link } from "@nextui-org/react"
-import { Controller, useForm } from "react-hook-form"
-import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { FORM_ERROR } from "src/core/components/Form";
+import login from "src/auth/mutations/login";
+import { Login } from "../schemas";
+import { useMutation } from "@blitzjs/rpc";
+import { Routes } from "@blitzjs/next";
+import { Card, Checkbox, Button, CardHeader, CardBody, Input, Link } from "@nextui-org/react";
+import { Controller, useForm } from "react-hook-form";
+import { z } from "zod";
 
 type LoginFormProps = {
-  onSuccess?: (user: PromiseReturnType<typeof login>) => void
-}
+  onSuccess?: (user: PromiseReturnType<typeof login>) => void;
+};
 
-type LoginFormSchema = z.infer<typeof Login>
+type LoginFormSchema = z.infer<typeof Login>;
 
 export const LoginForm = (props: LoginFormProps) => {
-  const [loginMutation] = useMutation(login)
+  const [loginMutation] = useMutation(login);
 
   const { handleSubmit, control, watch, reset, setValue } = useForm<LoginFormSchema>({
     mode: "onSubmit",
@@ -26,24 +26,24 @@ export const LoginForm = (props: LoginFormProps) => {
       password: "",
     },
     resolver: zodResolver(Login),
-  })
+  });
 
   const loginFormSubmit = async (values: LoginFormSchema) => {
     try {
-      const user = await loginMutation(values)
-      props.onSuccess?.(user)
-      reset({ email: "", password: "" })
+      const user = await loginMutation(values);
+      props.onSuccess?.(user);
+      reset({ email: "", password: "" });
     } catch (error: any) {
       if (error instanceof AuthenticationError) {
-        return { [FORM_ERROR]: "Sorry, those credentials are invalid" }
+        return { [FORM_ERROR]: "Sorry, those credentials are invalid" };
       } else {
         return {
           [FORM_ERROR]:
             "Sorry, we had an unexpected error. Please try again. - " + error.toString(),
-        }
+        };
       }
     }
-  }
+  };
 
   return (
     <div className="flex justify-center mt-12">
@@ -90,7 +90,7 @@ export const LoginForm = (props: LoginFormProps) => {
         </Card>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default LoginForm
+export default LoginForm;

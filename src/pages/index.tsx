@@ -1,9 +1,9 @@
-import Link from "next/link"
-import { useCurrentUser } from "src/users/hooks/useCurrentUser"
-import { BlitzPage } from "@blitzjs/next"
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem } from "@nextui-org/react"
-import { SignButtons } from "src/components/navbar/SignButtons"
-import { ProfileInfo } from "src/components/navbar/ProfileInfo"
+import Link from "next/link";
+import { useCurrentUser } from "src/users/hooks/useCurrentUser";
+import { BlitzPage } from "@blitzjs/next";
+import { Navbar, NavbarBrand, NavbarContent, NavbarItem } from "@nextui-org/react";
+import { SignButtons } from "src/components/navbar/SignButtons";
+import { ProfileInfo } from "src/components/navbar/ProfileInfo";
 
 /*
  * This file is just for a pleasant getting started page for your new app.
@@ -11,9 +11,9 @@ import { ProfileInfo } from "src/components/navbar/ProfileInfo"
  */
 
 const Home: BlitzPage = () => {
-  const currentUser = useCurrentUser()
+  const currentUser = useCurrentUser();
 
-  return <div></div>
-}
+  return <div></div>;
+};
 
-export default Home
+export default Home;

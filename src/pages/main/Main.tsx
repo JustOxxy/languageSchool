@@ -1,1 +1,1 @@
-export const Main = () => {}
+export const Main = () => {};

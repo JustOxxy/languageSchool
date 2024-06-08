@@ -1,9 +1,9 @@
-import { Tabs, Tab, Divider } from "@nextui-org/react"
-import { Key, Suspense, useState } from "react"
-import { MainInformation } from "./MainInformation"
+import { Tabs, Tab, Divider } from "@nextui-org/react";
+import { Key, Suspense, useState } from "react";
+import { MainInformation } from "./MainInformation";
 
 export const Profile = () => {
-  const [selectedTab, setSelectedTab] = useState<Key>("profile")
+  const [selectedTab, setSelectedTab] = useState<Key>("profile");
 
   return (
     <div className="mx-auto max-w-3xl py-6">
@@ -29,5 +29,5 @@ export const Profile = () => {
         </Suspense>
       )}
     </div>
-  )
-}
+  );
+};

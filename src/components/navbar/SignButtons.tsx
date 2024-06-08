@@ -1,6 +1,6 @@
-import { Routes } from "@blitzjs/next"
-import { NavbarItem, Button } from "@nextui-org/react"
-import Link from "next/link"
+import { Routes } from "@blitzjs/next";
+import { NavbarItem, Button } from "@nextui-org/react";
+import Link from "next/link";
 
 export const SignButtons = () => {
   return (
@@ -14,5 +14,5 @@ export const SignButtons = () => {
         <Link href={Routes.LoginPage()}>Login</Link>
       </NavbarItem>
     </>
-  )
-}
+  );
+};

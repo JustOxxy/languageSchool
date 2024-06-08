@@ -1,9 +1,9 @@
-import { Button } from "@nextui-org/react"
-import { Check, X, Pencil } from "lucide-react"
+import { Button } from "@nextui-org/react";
+import { Check, X, Pencil } from "lucide-react";
 
 interface MainInformationFormButtonsProps {
-  isEditing: boolean
-  setIsEditing: (isEditing: boolean) => void
+  isEditing: boolean;
+  setIsEditing: (isEditing: boolean) => void;
 }
 
 export const MainInformationFormButtons: React.FC<MainInformationFormButtonsProps> = ({
@@ -32,5 +32,5 @@ export const MainInformationFormButtons: React.FC<MainInformationFormButtonsProp
         </Button>
       )}
     </>
-  )
-}
+  );
+};
