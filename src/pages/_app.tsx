@@ -11,8 +11,6 @@ import { AuthenticationError, AuthorizationError } from "blitz"
 import React, { Suspense } from "react"
 import { withBlitz } from "src/blitz-client"
 import { NavbarUser } from "src/components/navbar/NavbarUser"
-import { ProfileInfo } from "src/components/navbar/ProfileInfo"
-import { SignButtons } from "src/components/navbar/SignButtons"
 
 import "src/styles/globals.css"
 
@@ -51,8 +49,8 @@ function MyApp({ Component, pageProps }: AppProps) {
                 </NavbarBrand>
                 <NavbarContent className="hidden sm:flex gap-4" justify="center">
                   <NavbarItem>
-                    <Link color="foreground" href="#">
-                      Features
+                    <Link color="foreground" href="/lesson">
+                      Lesson
                     </Link>
                   </NavbarItem>
                   <NavbarItem isActive>

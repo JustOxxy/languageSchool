@@ -1,202 +1,126 @@
-import React, { MutableRefObject, useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef } from "react"
 import { io, Socket } from "socket.io-client"
-import Peer, { SignalData } from "simple-peer"
-import { Button, Input } from "@nextui-org/react"
-import { DefaultEventsMap } from "socket.io/dist/typed-events"
+import Peer from "simple-peer"
+import { useRouter } from "next/router"
 
-export const ChatRoom = () => {
-  const socket = useRef<Socket<any, any>>()
-  const [me, setMe] = useState("")
-  const [stream, setStream] = useState<MediaStream>()
-  const [receivingCall, setReceivingCall] = useState(false)
-  const [caller, setCaller] = useState("")
-  const [callerSignal, setCallerSignal] = useState<Peer.SignalData>()
-  const [callAccepted, setCallAccepted] = useState(false)
-  const [idToCall, setIdToCall] = useState("")
-  const [callEnded, setCallEnded] = useState(false)
-  const [name, setName] = useState("")
-  const [videoButtonText, setVideoButtonText] = useState("")
-  const [audioButtonText, setAudioButtonText] = useState("")
-
-  const myVideo = useRef<HTMLVideoElement | null>(null)
-  const userVideo = useRef<HTMLVideoElement | null>(null)
+export const ChatRoom = (props) => {
+  const router = useRouter()
+  const { roomId } = router.query
+  const socketRef = useRef<Socket<any, any>>()
+  const currentUserVideo = useRef<HTMLVideoElement | null>(null)
+  const otherUserVideo = useRef<HTMLVideoElement | null>(null)
   const connectionRef = useRef<Peer.Instance>()
-  console.log(me)
-  console.log(caller)
-  console.log(idToCall)
-  useEffect(() => {
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        setStream(stream)
-        if (!myVideo.current) return
-        myVideo.current.srcObject = stream
-        setVideoButtonText("Turn off video")
-        setAudioButtonText("Turn off audio")
-      })
-      .catch((error) => console.log(error))
+  const peersRef = useRef<{ peer: Peer.Instance; peerId: string }[]>([])
 
-    socket.current = io("http://localhost:3001", {
+  useEffect(() => {
+    socketRef.current = io("http://localhost:8000", {
       transports: ["websocket"],
     })
 
-    socket.current.on("me", (id) => {
-      setMe(id)
-    })
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
+      .then((stream) => {
+        if (!currentUserVideo.current || !socketRef.current) return
+        currentUserVideo.current.srcObject = stream
+        socketRef.current.emit("join room", roomId)
 
-    socket.current.on("callUser", (data) => {
-      setReceivingCall(true)
-      setCaller(data.from)
-      setName(data.name)
-      setCallerSignal(data.signal)
-    })
+        console.log(socketRef.current.id)
+        socketRef.current.on("all users", (users) => {
+          const peers: { peer: Peer.Instance; peerId: string }[] = []
+
+          users.forEach((userId) => {
+            const peer = createPeer(userId, socketRef.current?.id, stream)
+            peers.push({ peer, peerId: userId })
+          })
+
+          peersRef.current = peers
+        })
+
+        socketRef.current.on("user joined", (payload) => {
+          const peer = addPeer(payload.signal, payload.callerID, stream)
+          peersRef.current.push({ peer, peerId: payload.callerID })
+        })
+
+        socketRef.current.on("user left", (id) => {
+          const peerObj = peersRef.current.find((peer) => peer.peerId === id)
+
+          if (peerObj) {
+            peerObj?.peer.destroy()
+            peersRef.current = peersRef.current.filter((peer) => peer.peerId !== id)
+            if (otherUserVideo.current) {
+              otherUserVideo.current.srcObject = null
+            }
+          }
+        })
+      })
+      .catch((error) => console.log(error))
+    return () => {
+      connectionRef.current?.destroy()
+    }
   }, [])
 
-  const callUser = (id) => {
+  const createPeer = (userToSignal, callerID, stream) => {
     const peer = new Peer({
       initiator: true,
       trickle: false,
-      stream: stream,
+      stream,
     })
 
-    peer.on("signal", (data) => {
-      socket.current?.emit("callUser", {
-        userToCall: id,
-        signalData: data,
-        from: me,
-        name: name,
-      })
+    peer.on("signal", (signal) => {
+      socketRef.current?.emit("sending signal", { userToSignal, callerID, signal })
     })
 
     peer.on("stream", (stream) => {
-      if (!userVideo.current) return
-      userVideo.current.srcObject = stream
+      if (!otherUserVideo.current) return
+      otherUserVideo.current.srcObject = stream
     })
 
     peer.on("close", () => {
       console.log("peer closed")
-      socket.current?.off("callAccepted")
+      peer.destroy()
+      socketRef.current?.off("receiving returned signal")
     })
 
-    socket.current?.on("callAccepted", (signal) => {
-      setCallAccepted(true)
-      peer.signal(signal)
+    socketRef.current?.on("receiving returned signal", (payload) => {
+      peer.signal(payload.signal)
     })
 
-    connectionRef.current = peer
+    return peer
   }
 
-  const answerCall = () => {
-    setCallAccepted(true)
+  const addPeer = (incomingSignal, callerID, stream) => {
     const peer = new Peer({
       initiator: false,
       trickle: false,
-      stream: stream,
+      stream,
     })
 
-    peer.on("signal", (data) => {
-      socket.current?.emit("answerCall", {
-        signal: data,
-        to: caller,
-      })
+    peer.signal(incomingSignal)
+
+    peer.on("signal", (signal) => {
+      socketRef.current?.emit("returning signal", { signal, callerID })
     })
 
     peer.on("stream", (stream) => {
-      if (!userVideo.current) return
-      userVideo.current.srcObject = stream
+      if (!otherUserVideo.current) return
+      otherUserVideo.current.srcObject = stream
     })
+
     peer.on("close", () => {
       console.log("peer closed")
-      socket.current?.off("callAccepted")
+      peer.destroy()
+      socketRef.current?.off("receiving returned signal")
     })
 
-    if (callerSignal) {
-      peer.signal(callerSignal)
-    }
-
     connectionRef.current = peer
+    return peer
   }
-
-  const resetCallState = () => {
-    setCallAccepted(false)
-    setCallEnded(false)
-    setCaller("")
-    setReceivingCall(false)
-    setName("")
-  }
-
-  const leaveCall = () => {
-    setCallEnded(true)
-    if (!connectionRef.current) return
-    connectionRef.current.destroy()
-    resetCallState()
-  }
-
-  const handleVideoButtonClick = () => {
-    const videoTrack = stream?.getVideoTracks()?.[0]
-
-    if (!videoTrack) return
-
-    if (videoTrack.enabled) {
-      videoTrack.enabled = false
-      setVideoButtonText("Turn on video")
-      return
-    }
-
-    videoTrack.enabled = true
-    setVideoButtonText("Turn off video")
-  }
-
-  const handleMicroButtonClick = () => {
-    const audioTrack = stream?.getAudioTracks()?.[0]
-
-    if (!audioTrack) return
-
-    if (audioTrack.enabled) {
-      audioTrack.enabled = false
-      setAudioButtonText("Turn on audio")
-      return
-    }
-    audioTrack.enabled = true
-    setAudioButtonText("Turn off audio")
-  }
-
+  console.log(otherUserVideo)
   return (
     <div>
-      <h1>Chat Room</h1>
-      <div className="container">
-        <div className="video">
-          <video playsInline muted ref={myVideo} autoPlay style={{ width: "300px" }} />
-          <Button onClick={handleVideoButtonClick}>{videoButtonText}</Button>
-          <Button onClick={handleMicroButtonClick}>{audioButtonText}</Button>
-        </div>
-        <div className="video">
-          {callAccepted && !callEnded ? (
-            <video playsInline ref={userVideo} autoPlay style={{ width: "300px" }} />
-          ) : null}
-        </div>
-        <div>
-          <Input label={"name"} value={name} onValueChange={setName} />
-          <div>{me}</div>
-          <Input label={"ID to call"} value={idToCall} onValueChange={setIdToCall} />
-          <div>
-            {callAccepted && !callEnded ? (
-              <Button onClick={leaveCall}>End Call</Button>
-            ) : (
-              <Button onClick={() => callUser(idToCall)}>Call user</Button>
-            )}
-            {idToCall}
-          </div>
-          <div>
-            {receivingCall && !callAccepted ? (
-              <>
-                <h1>{name} is calling</h1>
-                <Button onClick={answerCall}></Button>
-              </>
-            ) : null}
-          </div>
-        </div>
-      </div>
+      <video playsInline muted ref={currentUserVideo} autoPlay style={{ width: "300px" }} />
+
+      <video playsInline ref={otherUserVideo} autoPlay style={{ width: "300px" }} />
     </div>
   )
 }
