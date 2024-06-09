@@ -66,10 +66,11 @@ export const ChatRoom = () => {
     return () => {
       connectionRef.current?.destroy();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const stopVideoStream = () => {
-    const stream = currentUserVideo.current?.srcObject;
+    const stream = currentUserVideo.current?.srcObject as MediaStream;
     if (stream) {
       const tracks = stream.getTracks();
       tracks.forEach((track) => track.stop());

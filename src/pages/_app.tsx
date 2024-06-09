@@ -45,7 +45,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             <>
               <Navbar isBordered>
                 <NavbarBrand>
-                  <p className="font-bold text-inherit">LanguageSchool</p>
+                  <p className="font-bold text-inherit">SkillBoom</p>
                 </NavbarBrand>
                 <NavbarContent className="hidden sm:flex gap-4" justify="center">
                   <NavbarItem>
@@ -54,13 +54,11 @@ function MyApp({ Component, pageProps }: AppProps) {
                     </Link>
                   </NavbarItem>
                   <NavbarItem isActive>
-                    <Link href="#" aria-current="page">
-                      Customers
-                    </Link>
+                    <Link href="#">Find mentor</Link>
                   </NavbarItem>
                   <NavbarItem>
                     <Link color="foreground" href="#">
-                      Integrations
+                      Become mentor
                     </Link>
                   </NavbarItem>
                 </NavbarContent>
